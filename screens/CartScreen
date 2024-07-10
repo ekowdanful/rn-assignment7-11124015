@@ -1,0 +1,38 @@
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, Button } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const CartScreen = () => {
+    const [cart, setCart] = useState([]);
+
+    useEffect(() => {
+        const fetchCart = async () => {
+            const cartItems = await AsyncStorage.getItem('cart');
+            setCart(JSON.parse(cartItems) || []);
+        };
+        fetchCart();
+    }, []);
+
+    const removeFromCart = async (id) => {
+        const newCart = cart.filter(item => item.id !== id);
+        setCart(newCart);
+        await AsyncStorage.setItem('cart', JSON.stringify(newCart));
+    };
+
+    return (
+        <View>
+            <FlatList
+                data={cart}
+                keyExtractor={item => item.id.toString()}
+                renderItem={({ item }) => (
+                    <View>
+                        <Text>{item.title}</Text>
+                        <Button title="Remove from Cart" onPress={() => removeFromCart(item.id)} />
+                    </View>
+                )}
+            />
+        </View>
+    );
+};
+
+export default CartScreen;
