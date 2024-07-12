@@ -1,0 +1,8 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const addToCart = async (product) => {
+    const cartItems = await AsyncStorage.getItem('cart');
+    let cart = JSON.parse(cartItems) || [];
+    cart.push(product);
+    await AsyncStorage.setItem('cart', JSON.stringify(cart));
+};
